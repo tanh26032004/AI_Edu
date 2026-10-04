@@ -8,6 +8,13 @@ Tối ưu hóa hiển thị Mobile-First, Tinh gọn cài đặt, Trực quan h�
 import os
 import streamlit as st
 import io
+import textwrap
+
+
+def render_html(html_str: str):
+    """Hiển thị HTML thuần túy, loại bỏ khoảng trắng đầu dòng để Markdown không bao giờ hiểu nhầm thành code block."""
+    cleaned = "\n".join(line.strip() for line in html_str.split("\n") if line.strip())
+    st.markdown(cleaned, unsafe_allow_html=True)
 
 from sample_data import (
     SUBJECT_PRESETS,
@@ -516,7 +523,7 @@ if "current_package" not in st.session_state:
 # SIDEBAR - CẤU HÌNH ĐẦU VÀO TINH GỌN (SIMPLIFIED SETTINGS)
 # ==========================================
 with st.sidebar:
-    st.markdown("""
+    render_html("""
     <div class="sidebar-brand-card">
         <div class="brand-icon-box">
             <i class="fa-solid fa-graduation-cap"></i>
@@ -748,7 +755,7 @@ current_pkg = st.session_state.get("current_package")
 # TRƯỜNG HỢP 1: KHI CHƯA CHỌN HOẶC CHƯA BẤM XUẤT BẢN -> MÀN HÌNH CHÀO MỪNG & HƯỚNG DẪN
 if current_pkg is None:
     # 1. Hero Header Banner
-    st.markdown("""
+    render_html("""
     <div class="hero-container">
         <div class="hero-title">
             <span>EduMaster AI</span>
@@ -767,10 +774,10 @@ if current_pkg is None:
             <span class="badge-pill"><i class="fa-solid fa-location-dot" style="color: #FBBF24;"></i> Vĩnh Long & Toàn quốc</span>
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
     # 2. Onboarding Quick Guide
-    st.markdown("""
+    render_html("""
     <div class="welcome-container">
         <div class="welcome-header">
             <div class="welcome-icon">
@@ -785,15 +792,15 @@ if current_pkg is None:
                 </div>
             </div>
         </div>
-
-        <div style="font-size: 1.05rem; font-weight: 700; color: #1E293B; margin-bottom: 1rem;">
+        <div style="font-size: 1.05rem; font-weight: 700; color: #1E293B; margin-bottom: 0.8rem;">
             <i class="fa-solid fa-list-check" style="color: #2563EB;"></i> 3 Bước Khởi tạo Hồ sơ Bài dạy Nhanh chóng:
         </div>
-    """, unsafe_allow_html=True)
+    </div>
+    """)
 
     col_w1, col_w2, col_w3 = st.columns(3)
     with col_w1:
-        st.markdown("""
+        render_html("""
         <div class="welcome-step-card">
             <span class="welcome-step-badge"><i class="fa-solid fa-1"></i> BƯỚC 1</span>
             <div style="font-weight: 700; font-size: 1rem; color: #0F172A; margin-bottom: 0.4rem;">
@@ -803,10 +810,10 @@ if current_pkg is None:
                 Tại thanh bên trái, chọn Cấp học (THCS/THPT), Khối lớp, Môn học và Bộ SGK tương ứng của Thầy/Cô.
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
     with col_w2:
-        st.markdown("""
+        render_html("""
         <div class="welcome-step-card">
             <span class="welcome-step-badge"><i class="fa-solid fa-2"></i> BƯỚC 2</span>
             <div style="font-weight: 700; font-size: 1rem; color: #0F172A; margin-bottom: 0.4rem;">
@@ -816,10 +823,10 @@ if current_pkg is None:
                 Nhập tên bài dạy Thầy/Cô chuẩn bị lên lớp (Ví dụ: <i>Chuyện người con gái Nam Xương, Hàm số bậc hai, Quang hợp...</i>).
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
     with col_w3:
-        st.markdown("""
+        render_html("""
         <div class="welcome-step-card">
             <span class="welcome-step-badge"><i class="fa-solid fa-3"></i> BƯỚC 3</span>
             <div style="font-weight: 700; font-size: 1rem; color: #0F172A; margin-bottom: 0.4rem;">
@@ -829,56 +836,55 @@ if current_pkg is None:
                 Nhấn nút màu xanh <b>[🚀 XUẤT BẢN HỒ SƠ BÀI DẠY]</b> để xem ngay Giáo án 5512, Slide trình chiếu và Đề thi 7991.
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
-    st.markdown("""
-        <div style="margin-top: 1.8rem; font-size: 1.05rem; font-weight: 700; color: #1E293B;">
-            <i class="fa-solid fa-certificate" style="color: #0D9488;"></i> Quy chuẩn Sư phạm & Khảo thí Tích hợp Sẵn:
+    render_html("""
+    <div style="margin-top: 1.8rem; font-size: 1.05rem; font-weight: 700; color: #1E293B;">
+        <i class="fa-solid fa-certificate" style="color: #0D9488;"></i> Quy chuẩn Sư phạm & Khảo thí Tích hợp Sẵn:
+    </div>
+    
+    <div class="welcome-feature-box">
+        <div class="feature-icon-box" style="background: #EFF6FF; color: #2563EB;">
+            <i class="fa-solid fa-file-contract"></i>
         </div>
-        
-        <div class="welcome-feature-box">
-            <div class="feature-icon-box" style="background: #EFF6FF; color: #2563EB;">
-                <i class="fa-solid fa-file-contract"></i>
+        <div>
+            <div style="font-weight: 700; font-size: 0.95rem; color: #0F172A;">
+                Kế hoạch bài dạy chuẩn Công văn 5512/BGDĐT-GDTrH
             </div>
-            <div>
-                <div style="font-weight: 700; font-size: 0.95rem; color: #0F172A;">
-                    Kế hoạch bài dạy chuẩn Công văn 5512/BGDĐT-GDTrH
-                </div>
-                <div style="font-size: 0.86rem; color: #475569; line-height: 1.45; margin-top: 2px;">
-                    Thiết kế trọn vẹn tiến trình 4 hoạt động: Khởi động ➔ Hình thành kiến thức ➔ Luyện tập ➔ Vận dụng. Mỗi hoạt động đều có cấu trúc 4 bước rõ ràng: Chuyển giao, Thực hiện, Báo cáo và Kết luận.
-                </div>
-            </div>
-        </div>
-
-        <div class="welcome-feature-box">
-            <div class="feature-icon-box" style="background: #F0FDF4; color: #16A34A;">
-                <i class="fa-solid fa-clipboard-check"></i>
-            </div>
-            <div>
-                <div style="font-weight: 700; font-size: 0.95rem; color: #0F172A;">
-                    Đề kiểm tra định kì chuẩn hóa theo Công văn 7991/BGDĐT-GDTrH (17/12/2024)
-                </div>
-                <div style="font-size: 0.86rem; color: #475569; line-height: 1.45; margin-top: 2px;">
-                    Tích hợp Ma trận tỉ lệ 40% Biết - 30% Hiểu - 30% Vận dụng; Bản đặc tả mã hóa năng lực (NL_...); Đề thi 4 phần phân hóa (TN 4 lựa chọn, TN Đúng-Sai quy tắc điểm 0.1-1.0đ, TN Trả lời ngắn, Tự luận) và Hướng dẫn chấm chi tiết.
-                </div>
-            </div>
-        </div>
-
-        <div class="welcome-feature-box">
-            <div class="feature-icon-box" style="background: #FAF5FF; color: #9333EA;">
-                <i class="fa-solid fa-images"></i>
-            </div>
-            <div>
-                <div style="font-weight: 700; font-size: 0.95rem; color: #0F172A;">
-                    Dàn ý Slide Trình chiếu 16:9 kèm Hình ảnh minh họa & Xuất bản Office
-                </div>
-                <div style="font-size: 0.86rem; color: #475569; line-height: 1.45; margin-top: 2px;">
-                    Mỗi slide có hình ảnh minh họa chân thực, nội dung cô đọng và Lời giảng giáo viên (Speaker Notes). Hỗ trợ tải trực tiếp file Word (.docx) và bài giảng PowerPoint (.pptx).
-                </div>
+            <div style="font-size: 0.86rem; color: #475569; line-height: 1.45; margin-top: 2px;">
+                Thiết kế trọn vẹn tiến trình 4 hoạt động: Khởi động ➔ Hình thành kiến thức ➔ Luyện tập ➔ Vận dụng. Mỗi hoạt động đều có cấu trúc 4 bước rõ ràng: Chuyển giao, Thực hiện, Báo cáo và Kết luận.
             </div>
         </div>
     </div>
-    """, unsafe_allow_html=True)
+
+    <div class="welcome-feature-box">
+        <div class="feature-icon-box" style="background: #F0FDF4; color: #16A34A;">
+            <i class="fa-solid fa-clipboard-check"></i>
+        </div>
+        <div>
+            <div style="font-weight: 700; font-size: 0.95rem; color: #0F172A;">
+                Đề kiểm tra định kì chuẩn hóa theo Công văn 7991/BGDĐT-GDTrH (17/12/2024)
+            </div>
+            <div style="font-size: 0.86rem; color: #475569; line-height: 1.45; margin-top: 2px;">
+                Tích hợp Ma trận tỉ lệ 40% Biết - 30% Hiểu - 30% Vận dụng; Bản đặc tả mã hóa năng lực (NL_...); Đề thi 4 phần phân hóa (TN 4 lựa chọn, TN Đúng-Sai quy tắc điểm 0.1-1.0đ, TN Trả lời ngắn, Tự luận) và Hướng dẫn chấm chi tiết.
+            </div>
+        </div>
+    </div>
+
+    <div class="welcome-feature-box">
+        <div class="feature-icon-box" style="background: #FAF5FF; color: #9333EA;">
+            <i class="fa-solid fa-images"></i>
+        </div>
+        <div>
+            <div style="font-weight: 700; font-size: 0.95rem; color: #0F172A;">
+                Dàn ý Slide Trình chiếu 16:9 kèm Hình ảnh minh họa & Xuất bản Office
+            </div>
+            <div style="font-size: 0.86rem; color: #475569; line-height: 1.45; margin-top: 2px;">
+                Mỗi slide có hình ảnh minh họa chân thực, nội dung cô đọng và Lời giảng giáo viên (Speaker Notes). Hỗ trợ tải trực tiếp file Word (.docx) và bài giảng PowerPoint (.pptx).
+            </div>
+        </div>
+    </div>
+    """)
 
 
 # TRƯỜNG HỢP 2: KHI ĐÃ CÓ HỒ SƠ BÀI DẠY THEO LỰA CHỌN NGƯỜI DÙNG
@@ -909,7 +915,7 @@ else:
     # 2. Thẻ tóm tắt thông tin hiện hành (Overview Metrics)
     c1, c2, c3, c4 = st.columns(4)
     with c1:
-        st.markdown(f"""
+        render_html(f"""
         <div class="metric-card-box">
             <div>
                 <div class="metric-info-label">Môn học & Lớp</div>
@@ -920,7 +926,7 @@ else:
         """, unsafe_allow_html=True)
 
     with c2:
-        st.markdown(f"""
+        render_html(f"""
         <div class="metric-card-box">
             <div>
                 <div class="metric-info-label">Bộ sách & Thời lượng</div>
@@ -931,7 +937,7 @@ else:
         """, unsafe_allow_html=True)
 
     with c3:
-        st.markdown(f"""
+        render_html(f"""
         <div class="metric-card-box">
             <div>
                 <div class="metric-info-label">Slide có hình ảnh</div>
@@ -942,7 +948,7 @@ else:
         """, unsafe_allow_html=True)
 
     with c4:
-        st.markdown(f"""
+        render_html(f"""
         <div class="metric-card-box">
             <div>
                 <div class="metric-info-label">Đề khảo thí 7991</div>
@@ -1023,7 +1029,7 @@ else:
 
     # === TAB 1: KẾ HOẠCH BÀI DẠY (TRỰC QUAN HÓA, KHỚP 100% VỚI BÀI HỌC ĐÃ CHỌN) ===
     with tab1:
-        st.markdown(f"""
+        render_html(f"""
         <div style="font-size: 1.2rem; font-weight: 700; color: #0F172A; margin-bottom: 0.8rem;">
             <i class="fa-solid fa-file-lines" style="color: #2563EB;"></i> Kế hoạch bài dạy: {cur_meta.get('lesson_name')}
         </div>
@@ -1049,7 +1055,7 @@ else:
         competency_html = "<br>".join([f"• {item}" for item in competency_list])
         quality_html = "<br>".join([f"• {item}" for item in quality_list])
         
-        st.markdown(f"""
+        render_html(f"""
         <div class="visual-summary-container">
             <div class="visual-summary-card">
                 <div class="visual-summary-head blue">
@@ -1098,7 +1104,7 @@ else:
                     for i, step in enumerate(act.get("steps", []))
                 ])
                 
-                st.markdown(f"""
+                render_html(f"""
                 <div class="activity-card" style="border-left-color: {color};">
                     <div class="activity-header">
                         <span class="activity-title"><i class="fa-solid {icon}" style="color: {color};"></i> {act.get('name')}</span>
@@ -1143,7 +1149,7 @@ else:
             img_url = slide.get("image_url", "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800&auto=format&fit=crop&q=80")
             
             with st.container():
-                st.markdown(f"""
+                render_html(f"""
                 <div class="slide-card-container">
                     <div class="slide-header-bar">
                         <span class="slide-badge-num">
@@ -1165,7 +1171,7 @@ else:
                 """, unsafe_allow_html=True)
                 
                 for b in bullets:
-                    st.markdown(f"""
+                    render_html(f"""
                     <div class="slide-bullet-item">
                         <i class="fa-solid fa-circle-check" style="color: #2563EB; font-size: 0.85rem; margin-top: 3px; flex-shrink: 0;"></i>
                         <span><b>{b}</b></span>
@@ -1173,18 +1179,18 @@ else:
                     """, unsafe_allow_html=True)
                     
                 if notes:
-                    st.markdown(f"""
+                    render_html(f"""
                     <div class="speaker-notes-box">
                         <i class="fa-solid fa-microphone-lines" style="color: #D97706;"></i> <b>Lời giảng của Giáo viên (Speaker Notes):</b><br>
                         <i>"{notes}"</i>
                     </div>
                     """, unsafe_allow_html=True)
                     
-                st.markdown("""
+                render_html("""
                         </div>
                     </div>
                 </div>
-                """, unsafe_allow_html=True)
+                """)
                 st.write("")
 
 
@@ -1197,7 +1203,7 @@ else:
         """, unsafe_allow_html=True)
         
         # 4 Thẻ KPI Phân bổ điểm 7991
-        st.markdown("""
+        render_html("""
         <div class="exam-kpi-grid">
             <div class="exam-kpi-card">
                 <div class="exam-kpi-score">3,0 đ</div>
@@ -1240,7 +1246,7 @@ else:
 # ==========================================
 st.markdown("<br>", unsafe_allow_html=True)
 st.divider()
-st.markdown("""
+render_html("""
 <div style="text-align: center; color: #64748B; font-size: 0.82rem; padding: 0.5rem 0; line-height: 1.5;">
     <b>EduMaster AI</b> • Giải pháp Chuyển đổi số Sư phạm & Nâng cao năng lực Khảo thí THCS/THPT<br>
     <i>Tuân thủ nghiêm ngặt Công văn số 5512/BGDĐT-GDTrH và Công văn số 7991/BGDĐT-GDTrH (17/12/2024) của Bộ GDĐT.</i>
