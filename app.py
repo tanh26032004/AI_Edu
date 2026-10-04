@@ -3,6 +3,7 @@
 EduMaster AI - Hệ thống Soạn giảng & Khảo thí chuẩn Công văn 7991 & 5512
 Ứng dụng Web dành cho Giáo viên THCS và THPT (tỉnh Vĩnh Long và toàn quốc).
 Giao diện tối ưu phong cách EdTech SaaS Hiện đại - Tinh tế - Trực quan.
+Tự động thích ứng đa môn học và đa khối lớp (Toán, Ngữ văn, Vật lí, Hóa học, KHTN, Tiếng Anh...).
 """
 
 import os
@@ -10,6 +11,8 @@ import streamlit as st
 import io
 
 from sample_data import (
+    SUBJECT_PRESETS,
+    get_sample_package_for_subject,
     SAMPLE_METADATA,
     SAMPLE_LESSON_PLAN,
     SAMPLE_SLIDES,
@@ -43,7 +46,6 @@ st.markdown("""
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     }
     
-    /* Ẩn bớt padding mặc định của Streamlit */
     .block-container {
         padding-top: 1.8rem;
         padding-bottom: 3rem;
@@ -315,25 +317,33 @@ st.markdown("""
 
 
 # ==========================================
-# KHỞI TẠO STATE
+# KHỞI TẠO SESSION STATE
 # ==========================================
 if "current_package" not in st.session_state:
-    st.session_state["current_package"] = {
-        "metadata": SAMPLE_METADATA,
-        "lesson_plan": SAMPLE_LESSON_PLAN,
-        "slides": SAMPLE_SLIDES,
-        "exam_matrix": SAMPLE_EXAM_MATRIX,
-        "exam_spec": SAMPLE_EXAM_SPEC,
-        "exam_questions": SAMPLE_EXAM_QUESTIONS,
-        "exam_answers": SAMPLE_EXAM_ANSWERS,
-        "pedagogical_summary": "Bài dạy được thiết kế bám sát định hướng phát triển năng lực môn Vật lí theo CT GDPT 2018, hoàn chỉnh 4 hoạt động CV 5512 và hệ thống đề khảo thí 4 phần chuẩn xác tỉ lệ điểm CV 7991."
-    }
+    st.session_state["current_package"] = get_sample_package_for_subject(
+        subject="Vật lí",
+        grade="Lớp 10",
+        grade_level="THPT",
+        book_series="Kết nối tri thức với cuộc sống"
+    )
+
+if "active_subject" not in st.session_state:
+    st.session_state["active_subject"] = "Vật lí"
+
+if "active_grade" not in st.session_state:
+    st.session_state["active_grade"] = "Lớp 10"
+
+if "lesson_input_value" not in st.session_state:
+    st.session_state["lesson_input_value"] = SUBJECT_PRESETS["Vật lí"]["lesson_name"]
+
+if "notes_input_value" not in st.session_state:
+    st.session_state["notes_input_value"] = SUBJECT_PRESETS["Vật lí"]["special_notes"]
+
 
 # ==========================================
 # SIDEBAR - CẤU HÌNH ĐẦU VÀO SƯ PHẠM
 # ==========================================
 with st.sidebar:
-    # Header Thương hiệu SaaS
     st.markdown("""
     <div class="sidebar-brand-card">
         <div class="brand-icon-box">
@@ -352,7 +362,7 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
     
-    # 1. API Key (Xử lý an toàn không để hiện lỗi secrets)
+    # 1. API Key
     default_api_key = os.environ.get("GEMINI_API_KEY", "")
     if not default_api_key:
         try:
@@ -379,7 +389,7 @@ with st.sidebar:
     else:
         st.markdown("""
         <div class="status-indicator demo">
-            <i class="fa-solid fa-circle-info"></i> Chế độ xem thử & Xuất file sẵn sàng
+            <i class="fa-solid fa-circle-info"></i> Chế độ mẫu chuẩn sẵn sàng (Không cần Key)
         </div>
         """, unsafe_allow_html=True)
 
@@ -410,7 +420,7 @@ with st.sidebar:
     # 3. Môn học
     if grade_level == "THCS":
         subject_list = [
-            "Ngữ văn", "Toán", "Tiếng Anh", "Khoa học tự nhiên (KHTN)",
+            "Toán", "Ngữ văn", "Khoa học tự nhiên (KHTN)", "Tiếng Anh",
             "Lịch sử & Địa lí", "Tin học", "Giáo dục công dân (GDCD)",
             "Công nghệ", "Âm nhạc", "Mĩ thuật", "Hoạt động trải nghiệm hướng nghiệp"
         ]
@@ -420,56 +430,79 @@ with st.sidebar:
             "Lịch sử", "Địa lí", "Tin học", "Giáo dục kinh tế & Pháp luật (GDKT&PL)",
             "Công nghệ", "Hoạt động trải nghiệm hướng nghiệp"
         ]
+    
+    # Xác định index mặc định cho subject
+    default_sub_idx = 0
+    if st.session_state["active_subject"] in subject_list:
+        default_sub_idx = subject_list.index(st.session_state["active_subject"])
         
-    subject = st.selectbox("Môn học:", subject_list, index=0)
+    subject = st.selectbox("Môn học:", subject_list, index=default_sub_idx)
 
-    # 4. Bộ sách giáo khoa
+    # 4. Tự động đồng bộ khi Thầy/Cô đổi môn học
+    if subject != st.session_state.get("active_subject") or grade != st.session_state.get("active_grade"):
+        st.session_state["active_subject"] = subject
+        st.session_state["active_grade"] = grade
+        preset = SUBJECT_PRESETS.get(subject, {})
+        new_lesson = preset.get("lesson_name", f"Chủ đề trọng tâm môn {subject} - {grade}")
+        new_notes = preset.get("special_notes", f"Phát triển phẩm chất và năng lực đặc thù môn {subject} theo CT GDPT 2018.")
+        st.session_state["lesson_input_value"] = new_lesson
+        st.session_state["notes_input_value"] = new_notes
+        # Tự động nạp gói dữ liệu mẫu cho môn mới chọn
+        st.session_state["current_package"] = get_sample_package_for_subject(
+            subject=subject,
+            grade=grade,
+            grade_level=grade_level,
+            book_series="Kết nối tri thức với cuộc sống",
+            custom_lesson_name=new_lesson,
+            custom_notes=new_notes
+        )
+        st.rerun()
+
+    # 5. Bộ sách giáo khoa
     book_series = st.selectbox(
         "Bộ sách giáo khoa:",
         ["Kết nối tri thức với cuộc sống", "Cánh diều", "Chân trời sáng tạo"],
         index=0
     )
 
-    # 5. Tên bài học / Chủ đề
+    # 6. Tên bài học / Chủ đề
     lesson_name = st.text_input(
         "Tên bài học / Chủ đề:",
-        value="Bài 26: Cơ năng và định luật bảo toàn cơ năng",
-        placeholder="Ví dụ: Đoạn trích Trong lòng mẹ, Sóng ánh sáng,..."
+        value=st.session_state.get("lesson_input_value", f"Chủ đề môn {subject}"),
+        placeholder=f"Nhập tên bài dạy môn {subject}..."
     )
 
-    # 6. Thời lượng
+    # 7. Thời lượng
     duration = st.selectbox(
         "Thời lượng bài dạy:",
         ["1 tiết (45 phút)", "2 tiết (90 phút)", "3 tiết (135 phút)", "4 tiết (180 phút)", "Tùy chỉnh khác"],
         index=1
     )
 
-    # 7. Ghi chú sư phạm bổ sung
+    # 8. Ghi chú sư phạm bổ sung
     special_notes = st.text_area(
         "Ghi chú sư phạm / Phương pháp (Tùy chọn):",
-        placeholder="Ví dụ: Ứng dụng mô hình STEM, rèn luyện làm việc nhóm, học sinh khá giỏi, tích hợp công nghệ số...",
-        value="Tích hợp mô phỏng thí nghiệm ảo PhET và liên hệ tình huống kỹ thuật thực tiễn (tàu lượn, đập thủy điện)."
+        value=st.session_state.get("notes_input_value", ""),
+        placeholder="Ví dụ: Tích hợp STEM, rèn luyện làm việc nhóm, học sinh khá giỏi..."
     )
 
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # 8. Nút tạo nội dung AI
-    btn_generate = st.button("Xuất bản Trọn bộ Tài liệu (AI)", type="primary", use_container_width=True)
+    # 9. Nút tạo nội dung AI
+    btn_generate = st.button(f"Xuất bản Trọn bộ Tài liệu ({subject})", type="primary", use_container_width=True)
     
-    # Nút nạp lại bản mẫu
-    btn_sample = st.button("Nạp Dữ liệu Mẫu Chuẩn (Demo)", use_container_width=True)
+    # Nút nạp lại mẫu chuẩn của môn đang chọn
+    btn_sample = st.button(f"Nạp Dữ liệu Mẫu ({subject} - {grade})", use_container_width=True)
     if btn_sample:
-        st.session_state["current_package"] = {
-            "metadata": SAMPLE_METADATA,
-            "lesson_plan": SAMPLE_LESSON_PLAN,
-            "slides": SAMPLE_SLIDES,
-            "exam_matrix": SAMPLE_EXAM_MATRIX,
-            "exam_spec": SAMPLE_EXAM_SPEC,
-            "exam_questions": SAMPLE_EXAM_QUESTIONS,
-            "exam_answers": SAMPLE_EXAM_ANSWERS,
-            "pedagogical_summary": "Dữ liệu mẫu chuẩn hóa 100% theo Công văn 5512 và Công văn 7991/BGDĐT-GDTrH."
-        }
-        st.toast("Đã nạp trọn bộ dữ liệu mẫu chuẩn thành công!", icon="✅")
+        st.session_state["current_package"] = get_sample_package_for_subject(
+            subject=subject,
+            grade=grade,
+            grade_level=grade_level,
+            book_series=book_series,
+            custom_lesson_name=lesson_name,
+            custom_notes=special_notes
+        )
+        st.toast(f"Đã nạp trọn bộ dữ liệu mẫu môn {subject} ({grade}) thành công!", icon="✅")
         st.rerun()
 
     st.divider()
@@ -486,12 +519,22 @@ with st.sidebar:
 # XỬ LÝ SỰ KIỆN TẠO MỚI NỘI DUNG VỚI AI
 # ==========================================
 if btn_generate:
-    if not api_key_input:
-        st.error("Vui lòng nhập Google Gemini API Key trong thanh cấu hình bên trái để kích hoạt AI tạo mới nội dung.")
-    elif not lesson_name.strip():
-        st.warning("Vui lòng nhập tên bài học hoặc chủ đề cần soạn.")
+    if not lesson_name.strip():
+        st.warning(f"Vui lòng nhập tên bài học môn {subject}.")
+    elif not api_key_input:
+        # Nếu chưa có API Key: Tự động khởi tạo trọn bộ mẫu chuẩn hóa cho môn và chủ đề đang nhập
+        st.session_state["current_package"] = get_sample_package_for_subject(
+            subject=subject,
+            grade=grade,
+            grade_level=grade_level,
+            book_series=book_series,
+            custom_lesson_name=lesson_name,
+            custom_notes=special_notes
+        )
+        st.info(f"ℹ️ **Chế độ xem thử chuẩn hóa:** Đã khởi tạo hồ sơ sư phạm môn **{subject} ({grade})** với bài **{lesson_name}**. Hãy nhập Gemini API Key để kích hoạt AI sáng tạo nội dung tùy biến trực tiếp!")
+        st.rerun()
     else:
-        with st.spinner("EduMaster AI đang phân tích dữ liệu sư phạm, thiết lập ma trận CV 7991 và tiến trình 4 hoạt động CV 5512..."):
+        with st.spinner(f"EduMaster AI đang biên soạn hồ sơ sư phạm môn {subject} ({grade}) chuẩn CV 5512 và CV 7991..."):
             try:
                 new_data = generate_pedagogical_package(
                     api_key=api_key_input,
@@ -522,12 +565,12 @@ if btn_generate:
                     "exam_spec": new_data.get("exam_spec_markdown", ""),
                     "exam_questions": new_data.get("exam_questions_markdown", ""),
                     "exam_answers": new_data.get("exam_answers_markdown", ""),
-                    "pedagogical_summary": new_data.get("pedagogical_summary", "Đã khởi tạo hoàn tất hồ sơ sư phạm chất lượng cao.")
+                    "pedagogical_summary": new_data.get("pedagogical_summary", f"Đã khởi tạo hoàn tất hồ sơ sư phạm môn {subject} chất lượng cao.")
                 }
-                st.toast("Đã xuất bản trọn bộ hồ sơ sư phạm thành công!", icon="✅")
+                st.toast(f"Đã xuất bản trọn bộ tài liệu môn {subject} thành công!", icon="✅")
                 st.rerun()
             except Exception as e:
-                st.error(f"Có lỗi xảy ra trong quá trình khởi tạo: {str(e)}")
+                st.error(f"Có lỗi xảy ra trong quá trình khởi tạo AI: {str(e)}")
 
 
 # ==========================================
@@ -536,7 +579,7 @@ if btn_generate:
 current_pkg = st.session_state["current_package"]
 cur_meta = current_pkg.get("metadata", {})
 
-# 1. Hero Header Banner Thiết kế Cao cấp
+# 1. Hero Header Banner
 st.markdown(f"""
 <div class="hero-container">
     <div class="hero-title">
@@ -565,7 +608,7 @@ with c1:
     <div class="metric-card-box">
         <div>
             <div class="metric-info-label">Môn học & Lớp</div>
-            <div class="metric-info-val">{cur_meta.get('subject', 'Vật lí')} - {cur_meta.get('grade', 'Lớp 10')}</div>
+            <div class="metric-info-val">{cur_meta.get('subject', subject)} - {cur_meta.get('grade', grade)}</div>
         </div>
         <div class="metric-icon-circle icon-blue">
             <i class="fa-solid fa-book-open"></i>
@@ -671,11 +714,12 @@ col_d1, col_d2, col_d3 = st.columns([1.2, 1.2, 1])
 
 with col_d1:
     if docx_bytes:
-        clean_name = cur_meta.get('lesson_name', 'Ho_So_Su_Pham').replace(' ', '_').replace(':', '')
+        clean_subj = cur_meta.get('subject', 'Mon').replace(' ', '_').replace('(', '').replace(')', '')
+        clean_name = cur_meta.get('lesson_name', 'Ho_So_Su_Pham').replace(' ', '_').replace(':', '')[:30]
         st.download_button(
-            label="Tải Hồ sơ Giáo án & Đề thi (.docx)",
+            label=f"Tải Giáo án & Đề thi ({cur_meta.get('subject')}) (.docx)",
             data=docx_bytes.getvalue(),
-            file_name=f"EduMaster_{clean_name}.docx",
+            file_name=f"EduMaster_{clean_subj}_{clean_name}.docx",
             mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             type="primary",
             use_container_width=True,
@@ -684,11 +728,12 @@ with col_d1:
 
 with col_d2:
     if pptx_bytes:
-        clean_name = cur_meta.get('lesson_name', 'Bai_Giang_Slide').replace(' ', '_').replace(':', '')
+        clean_subj = cur_meta.get('subject', 'Mon').replace(' ', '_').replace('(', '').replace(')', '')
+        clean_name = cur_meta.get('lesson_name', 'Bai_Giang').replace(' ', '_').replace(':', '')[:30]
         st.download_button(
-            label="Tải Bài giảng Trình chiếu (.pptx)",
+            label=f"Tải Bài giảng Trình chiếu ({cur_meta.get('subject')}) (.pptx)",
             data=pptx_bytes.getvalue(),
-            file_name=f"EduMaster_{clean_name}.pptx",
+            file_name=f"EduMaster_{clean_subj}_{clean_name}.pptx",
             mime="application/vnd.openxmlformats-officedocument.presentationml.presentation",
             type="secondary",
             use_container_width=True,
@@ -696,10 +741,11 @@ with col_d2:
         )
 
 with col_d3:
+    clean_subj = cur_meta.get('subject', 'Mon').replace(' ', '_').replace('(', '').replace(')', '')
     st.download_button(
-        label="Tải Toàn văn Markdown (.md)",
+        label=f"Tải Toàn văn Markdown (.md)",
         data=full_markdown_text.encode('utf-8'),
-        file_name=f"EduMaster_{cur_meta.get('lesson_name', 'tai_lieu')}.md",
+        file_name=f"EduMaster_{clean_subj}.md",
         mime="text/markdown",
         use_container_width=True
     )
@@ -715,13 +761,13 @@ tab1, tab2, tab3 = st.tabs([
 
 # === TAB 1: KẾ HOẠCH BÀI DẠY (CV 5512) ===
 with tab1:
-    st.markdown("""
+    st.markdown(f"""
     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.8rem;">
         <div style="font-size: 1.1rem; font-weight: 700; color: #0F172A;">
-            <i class="fa-solid fa-file-lines" style="color: #2563EB;"></i> Kế hoạch bài dạy chuẩn khung Công văn 5512/BGDĐT-GDTrH
+            <i class="fa-solid fa-file-lines" style="color: #2563EB;"></i> Kế hoạch bài dạy môn {cur_meta.get('subject')} - {cur_meta.get('grade')}
         </div>
         <span style="font-size: 0.8rem; background: #EFF6FF; color: #1D4ED8; padding: 4px 10px; border-radius: 6px; font-weight: 600;">
-            4 Hoạt động bắt buộc
+            Chuẩn CV 5512/BGDĐT
         </span>
     </div>
     """, unsafe_allow_html=True)
@@ -736,7 +782,7 @@ with tab2:
     st.markdown(f"""
     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.8rem;">
         <div style="font-size: 1.1rem; font-weight: 700; color: #0F172A;">
-            <i class="fa-solid fa-display" style="color: #2563EB;"></i> Dàn ý & Trình chiếu Bài giảng ({len(slides)} Trang Slide)
+            <i class="fa-solid fa-display" style="color: #2563EB;"></i> Dàn ý & Trình chiếu Bài giảng môn {cur_meta.get('subject')} ({len(slides)} Trang Slide)
         </div>
         <span style="font-size: 0.8rem; background: #F5F3FF; color: #6D28D9; padding: 4px 10px; border-radius: 6px; font-weight: 600;">
             Tỉ lệ chuẩn 16:9 + Lời giảng
@@ -791,13 +837,13 @@ with tab2:
 
 # === TAB 3: ĐỀ KIỂM TRA ĐỊNH KÌ (CV 7991) ===
 with tab3:
-    st.markdown("""
+    st.markdown(f"""
     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.8rem;">
         <div style="font-size: 1.1rem; font-weight: 700; color: #0F172A;">
-            <i class="fa-solid fa-clipboard-check" style="color: #2563EB;"></i> Đề kiểm tra định kì & Ma trận đặc tả (Công văn 7991/BGDĐT-GDTrH)
+            <i class="fa-solid fa-clipboard-check" style="color: #2563EB;"></i> Đề kiểm tra định kì môn {cur_meta.get('subject')} - {cur_meta.get('grade')}
         </div>
         <span style="font-size: 0.8rem; background: #ECFDF5; color: #047857; padding: 4px 10px; border-radius: 6px; font-weight: 600;">
-            Ban hành 17/12/2024
+            Chuẩn CV 7991 (17/12/2024)
         </span>
     </div>
     """, unsafe_allow_html=True)
