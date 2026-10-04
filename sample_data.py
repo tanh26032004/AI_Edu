@@ -753,6 +753,67 @@ TOAN_EXAM_ANSWERS = """# HƯỚNG DẪN CHẤM VÀ ĐÁP ÁN ĐỀ KIỂM TRA TO
 
 
 # ==============================================================================
+# HỆ THỐNG HÌNH ẢNH MINH HỌA TRỰC QUAN CHO BÀI GIẢNG SLIDE (CURATED SLIDE IMAGES)
+# ==============================================================================
+SUBJECT_SLIDE_IMAGES = {
+    "Vật lí": [
+        "https://images.unsplash.com/photo-1513889961551-628c1e5e2ee9?w=800&auto=format&fit=crop&q=80",  # Tàu lượn siêu tốc
+        "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&auto=format&fit=crop&q=80",  # Mục tiêu
+        "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=800&auto=format&fit=crop&q=80",  # Khái niệm cơ năng
+        "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=800&auto=format&fit=crop&q=80",  # Chuyển hóa năng lượng
+        "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&auto=format&fit=crop&q=80",  # Định luật bảo toàn
+        "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=80",  # Mô phỏng PhET
+        "https://images.unsplash.com/photo-1508873696983-2df57046475a?w=800&auto=format&fit=crop&q=80",  # Lực ma sát và nhiệt
+        "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&auto=format&fit=crop&q=80",  # Quy trình 4 bước
+        "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=800&auto=format&fit=crop&q=80",  # Luyện tập tại lớp
+        "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=800&auto=format&fit=crop&q=80",  # Tổng kết & dặn dò
+    ],
+    "Toán": [
+        "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=800&auto=format&fit=crop&q=80",  # Trắc địa đo khoảng cách
+        "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&auto=format&fit=crop&q=80",  # Mục tiêu
+        "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=800&auto=format&fit=crop&q=80",  # Định lí Cosin
+        "https://images.unsplash.com/photo-1596495578065-6e0763fa1178?w=800&auto=format&fit=crop&q=80",  # Hệ quả tính góc
+        "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&auto=format&fit=crop&q=80",  # Định lí Sin & Ngoại tiếp
+        "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=800&auto=format&fit=crop&q=80",  # Giải mã bài toán hồ nước
+        "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=800&auto=format&fit=crop&q=80",  # Tổng kết & Dự án
+    ],
+    "Ngữ văn": [
+        "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&auto=format&fit=crop&q=80",  # Thiên nhiên sử thi
+        "https://images.unsplash.com/photo-1455390582262-044cdead277a?w=800&auto=format&fit=crop&q=80",  # Mục tiêu cần đạt
+        "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&auto=format&fit=crop&q=80",  # Chân dung người anh hùng
+        "https://images.unsplash.com/photo-1461360370896-922624d12aa1?w=800&auto=format&fit=crop&q=80",  # Cảnh ăn mừng chiến thắng
+        "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=800&auto=format&fit=crop&q=80",  # Tổng kết di sản văn hóa
+    ],
+    "Khoa học tự nhiên (KHTN)": [
+        "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=800&auto=format&fit=crop&q=80",  # Thí nghiệm phòng lab
+        "https://images.unsplash.com/photo-1603126857599-f6e157fa2fe6?w=800&auto=format&fit=crop&q=80",  # Ống nghiệm và thang pH
+        "https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800&auto=format&fit=crop&q=80",  # Phản ứng acid bazơ
+        "https://images.unsplash.com/photo-1507668077129-56e32842fceb?w=800&auto=format&fit=crop&q=80",  # Ứng dụng nông nghiệp và đất trồng
+        "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=800&auto=format&fit=crop&q=80",  # Tổng kết
+    ]
+}
+
+DEFAULT_EDUCATION_IMAGES = [
+    "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=800&auto=format&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=800&auto=format&fit=crop&q=80",
+]
+
+def attach_slide_images(subject: str, slides: list) -> list:
+    img_list = SUBJECT_SLIDE_IMAGES.get(subject, DEFAULT_EDUCATION_IMAGES)
+    enhanced = []
+    for idx, s in enumerate(slides):
+        s_copy = dict(s)
+        if "image_url" not in s_copy or not s_copy.get("image_url"):
+            s_copy["image_url"] = img_list[idx % len(img_list)]
+        enhanced.append(s_copy)
+    return enhanced
+
+
+# ==============================================================================
 # HÀM THÍCH ỨNG ĐA MÔN HỌC (MULTI-SUBJECT ADAPTIVE ENGINE)
 # ==============================================================================
 def get_sample_package_for_subject(
@@ -782,7 +843,7 @@ def get_sample_package_for_subject(
         return {
             "metadata": meta,
             "lesson_plan": TOAN_LESSON_PLAN,
-            "slides": TOAN_SLIDES,
+            "slides": attach_slide_images(subject_clean, TOAN_SLIDES),
             "exam_matrix": TOAN_EXAM_MATRIX,
             "exam_spec": TOAN_EXAM_SPEC,
             "exam_questions": TOAN_EXAM_QUESTIONS,
@@ -988,7 +1049,7 @@ Viết một đoạn văn nghị luận xã hội (khoảng 200 chữ) bàn về
         return {
             "metadata": meta,
             "lesson_plan": van_lesson_plan,
-            "slides": van_slides,
+            "slides": attach_slide_images(subject_clean, van_slides),
             "exam_matrix": van_exam_matrix,
             "exam_spec": van_exam_spec,
             "exam_questions": van_exam_questions,
@@ -1010,7 +1071,7 @@ Viết một đoạn văn nghị luận xã hội (khoảng 200 chữ) bàn về
         return {
             "metadata": meta,
             "lesson_plan": VATLI_LESSON_PLAN,
-            "slides": VATLI_SLIDES,
+            "slides": attach_slide_images(subject_clean, VATLI_SLIDES),
             "exam_matrix": VATLI_EXAM_MATRIX,
             "exam_spec": VATLI_EXAM_SPEC,
             "exam_questions": VATLI_EXAM_QUESTIONS,
@@ -1283,7 +1344,7 @@ Trình bày các bước phân tích và đề xuất giải pháp cho một tì
         return {
             "metadata": meta,
             "lesson_plan": gen_lesson_plan,
-            "slides": gen_slides,
+            "slides": attach_slide_images(subject_clean, gen_slides),
             "exam_matrix": gen_exam_matrix,
             "exam_spec": gen_exam_spec,
             "exam_questions": gen_exam_questions,
