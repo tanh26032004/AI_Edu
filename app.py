@@ -11,7 +11,7 @@ import io
 import textwrap
 
 
-def render_html(html_str: str):
+def render_html(html_str: str, **kwargs):
     """Hiển thị HTML thuần túy, loại bỏ khoảng trắng đầu dòng để Markdown không bao giờ hiểu nhầm thành code block."""
     cleaned = "\n".join(line.strip() for line in html_str.split("\n") if line.strip())
     st.markdown(cleaned, unsafe_allow_html=True)
