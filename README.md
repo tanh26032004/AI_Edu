@@ -39,31 +39,6 @@
 
 ---
 
-## 🚀 HƯỚNG DẪN CÀI ĐẶT & CHẠY LOCAL (MÁY CÁ NHÂN)
-
-### Yêu cầu hệ thống
-- Python 3.10 trở lên.
-- Đã cài đặt `pip`.
-
-### Bước 1: Di chuyển vào thư mục dự án
-```bash
-cd /Users/wocten/Documents/masteredu
-```
-
-### Bước 2: Cài đặt các thư viện cần thiết
-```bash
-pip install -r requirements.txt
-```
-
-### Bước 3: Khởi chạy ứng dụng Web
-```bash
-streamlit run app.py
-```
-Sau khi chạy lệnh trên, trình duyệt web sẽ tự động mở địa chỉ:
-`http://localhost:8501`
-
----
-
 ## 🌐 HƯỚNG DẪN TRIỂN KHAI LÊN STREAMLIT COMMUNITY CLOUD (LẤY LINK DỰ THI)
 
 Để tạo link trực tuyến dạng `https://edumaster-ai.streamlit.app` gửi cho Ban Giám khảo hoặc Thầy/Cô sử dụng trực tiếp trên điện thoại và máy tính:
