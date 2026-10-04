@@ -68,26 +68,25 @@ Sau khi chạy lệnh trên, trình duyệt web sẽ tự động mở địa ch
 
 Để tạo link trực tuyến dạng `https://edumaster-ai.streamlit.app` gửi cho Ban Giám khảo hoặc Thầy/Cô sử dụng trực tiếp trên điện thoại và máy tính:
 
-### Bước 1: Đẩy mã nguồn lên GitHub
-1. Tạo một repository mới trên [GitHub](https://github.com/new) (ví dụ: `edumaster-ai`).
-2. Khởi tạo Git và đẩy mã nguồn lên:
-   ```bash
-   git init
-   git add .
-   git commit -m "Khoi tao du an EduMaster AI"
-   git branch -M main
-   git remote add origin https://github.com/<tai-khoan-github>/edumaster-ai.git
-   git push -u origin main
-   ```
+### Bước 1: Kho mã nguồn GitHub
+Kho mã nguồn chính thức của dự án đã được thiết lập tại:
+🔗 **https://github.com/tanh26032004/AI_Edu.git**
+
+Để đẩy cập nhật mới nhất:
+```bash
+git add .
+git commit -m "Update EduMaster AI"
+git push origin main
+```
 
 ### Bước 2: Triển khai lên Streamlit Community Cloud
-1. Truy cập vào [Streamlit Community Cloud](https://share.streamlit.io/) và đăng nhập bằng tài khoản GitHub.
+1. Truy cập vào [Streamlit Community Cloud](https://share.streamlit.io/) và đăng nhập bằng tài khoản GitHub `tanh26032004`.
 2. Bấm nút **"Create app"** (hoặc **"New app"**).
 3. Điền các thông tin:
-   - **Repository:** `<tai-khoan-github>/edumaster-ai`
+   - **Repository:** `tanh26032004/AI_Edu`
    - **Branch:** `main`
    - **Main file path:** `app.py`
-   - **App URL:** Đặt tên tùy chọn (ví dụ: `edumaster-vinhlong.streamlit.app`).
+   - **App URL:** Đặt tên tùy chọn (ví dụ: `edumaster-ai.streamlit.app`).
 
 ### Bước 3: Cấu hình API Key tự động (Tùy chọn)
 Trong phần **Advanced settings** ➔ **Secrets**, bạn có thể thêm dòng sau để ứng dụng tự động nhận diện API Key cho toàn bộ người dùng mà không cần nhập thủ công:
