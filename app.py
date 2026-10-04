@@ -1132,7 +1132,7 @@ else:
         <div class="hero-title">
             <span>EduMaster AI</span>
             <span class="hero-version-pill">
-                <i class="fa-solid fa-sparkles"></i> Sư phạm 2025
+                <i class="fa-solid fa-sparkles"></i> Sư phạm 2026
             </span>
         </div>
         <div class="hero-subtitle">
