@@ -39,41 +39,6 @@
 
 ---
 
-## 🌐 HƯỚNG DẪN TRIỂN KHAI LÊN STREAMLIT COMMUNITY CLOUD (LẤY LINK DỰ THI)
-
-Để tạo link trực tuyến dạng `https://edumaster-ai.streamlit.app` gửi cho Ban Giám khảo hoặc Thầy/Cô sử dụng trực tiếp trên điện thoại và máy tính:
-
-### Bước 1: Kho mã nguồn GitHub
-Kho mã nguồn chính thức của dự án đã được thiết lập tại:
-🔗 **https://github.com/tanh26032004/AI_Edu.git**
-
-Để đẩy cập nhật mới nhất:
-```bash
-git add .
-git commit -m "Update EduMaster AI"
-git push origin main
-```
-
-### Bước 2: Triển khai lên Streamlit Community Cloud
-1. Truy cập vào [Streamlit Community Cloud](https://share.streamlit.io/) và đăng nhập bằng tài khoản GitHub `tanh26032004`.
-2. Bấm nút **"Create app"** (hoặc **"New app"**).
-3. Điền các thông tin:
-   - **Repository:** `tanh26032004/AI_Edu`
-   - **Branch:** `main`
-   - **Main file path:** `app.py`
-   - **App URL:** Đặt tên tùy chọn (ví dụ: `edumaster-ai.streamlit.app`).
-
-### Bước 3: Cấu hình API Key tự động (Tùy chọn)
-Trong phần **Advanced settings** ➔ **Secrets**, bạn có thể thêm dòng sau để ứng dụng tự động nhận diện API Key cho toàn bộ người dùng mà không cần nhập thủ công:
-```toml
-GEMINI_API_KEY = "Khóa-API-Gemini-Của-Bạn"
-```
-
-Bấm **"Deploy!"** và chờ 1-2 phút. Bạn sẽ nhận được đường link chính thức:
-`https://edumaster-vinhlong.streamlit.app` sẵn sàng để nộp bài dự thi!
-
----
-
 ## 📁 CẤU TRÚC MÃ NGUỒN
 
 ```
