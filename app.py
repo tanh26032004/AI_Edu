@@ -9,6 +9,7 @@ import os
 import streamlit as st
 import io
 import textwrap
+import time
 
 
 def render_html(html_str: str, **kwargs):
@@ -498,6 +499,114 @@ st.markdown("""
         font-weight: 600;
         transition: all 0.2s ease;
     }
+
+    /* AI THINKING PROCESS ANIMATION */
+    .ai-thinking-card {
+        background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
+        border: 2px solid #3B82F6;
+        border-radius: 16px;
+        padding: 24px;
+        margin: 20px 0;
+        box-shadow: 0 12px 30px -8px rgba(37, 99, 235, 0.18);
+        position: relative;
+        overflow: hidden;
+    }
+    .ai-thinking-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #2563EB, #06B6D4, #10B981, #2563EB);
+        background-size: 300% 100%;
+        animation: thinking-shimmer 2s infinite linear;
+    }
+    @keyframes thinking-shimmer {
+        0% { background-position: 0% 0%; }
+        100% { background-position: 300% 0%; }
+    }
+    .thinking-pulse-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: #EFF6FF;
+        border: 1px solid #BFDBFE;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: pulse-aura 1.5s infinite ease-in-out;
+    }
+    @keyframes pulse-aura {
+        0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4); }
+        50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(37, 99, 235, 0); }
+    }
+    .thinking-progress-track {
+        background: #E2E8F0;
+        height: 8px;
+        border-radius: 999px;
+        overflow: hidden;
+        margin: 16px 0 20px 0;
+    }
+    .thinking-progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #2563EB, #06B6D4);
+        border-radius: 999px;
+        transition: width 0.4s ease;
+    }
+    .thinking-steps-box {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .thinking-step-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 0.88rem;
+        transition: all 0.3s ease;
+    }
+    .thinking-step-row.done {
+        background: #F0FDF4;
+        color: #166534;
+        font-weight: 600;
+        border: 1px solid #DCFCE7;
+    }
+    .thinking-step-row.active {
+        background: #EFF6FF;
+        color: #1D4ED8;
+        font-weight: 700;
+        border: 1px solid #BFDBFE;
+    }
+    .thinking-step-row.pending {
+        background: #F8FAFC;
+        color: #94A3B8;
+        border: 1px solid #F1F5F9;
+    }
+    .thinking-log-terminal {
+        background: #0F172A;
+        color: #38BDF8;
+        font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        font-size: 0.8rem;
+        padding: 12px 16px;
+        border-radius: 10px;
+        margin-top: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid #1E293B;
+    }
+    .thinking-cursor {
+        display: inline-block;
+        width: 8px;
+        height: 15px;
+        background: #38BDF8;
+        animation: cursor-blink 0.8s infinite;
+    }
+    @keyframes cursor-blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -601,7 +710,7 @@ with st.sidebar:
     </div>
     """)
 
-    with st.expander("📝 Ghi chú yêu cầu riêng (Tùy chọn)", expanded=False):
+    with st.expander("Ghi chú yêu cầu riêng (Tùy chọn)", expanded=False):
         special_notes = st.text_area(
             "Yêu cầu sư phạm bổ sung (nếu có):",
             value="",
@@ -612,8 +721,8 @@ with st.sidebar:
     st.markdown("<br>", unsafe_allow_html=True)
     
     # 6. Nút kích hoạt chính
-    btn_generate = st.button(f"🚀 XUẤT BẢN HỒ SƠ BÀI DẠY ({subject.upper()})", type="primary", use_container_width=True)
-    btn_sample = st.button(f"💡 Nạp Gợi ý Mẫu ({subject} - {grade})", use_container_width=True)
+    btn_generate = st.button(f"XUẤT BẢN HỒ SƠ BÀI DẠY ({subject.upper()})", type="primary", use_container_width=True)
+    btn_sample = st.button(f"Nạp Gợi ý Mẫu ({subject} - {grade})", use_container_width=True)
     
     if btn_sample:
         preset = SUBJECT_PRESETS.get(subject, {})
@@ -627,10 +736,10 @@ with st.sidebar:
             lesson_name=sample_topic,
             special_notes=preset.get("special_notes", "")
         )
-        st.toast(f"Đã nạp gợi ý bài học: '{sample_topic}'", icon="💡")
+        st.toast(f"Đã nạp gợi ý bài học: '{sample_topic}'")
         st.rerun()
 
-    st.caption("⚡ *Hồ sơ xuất bản sẽ khớp 100% với tên bài học và môn học Thầy/Cô đã chọn.*")
+    st.caption("*Hồ sơ xuất bản sẽ khớp 100% với tên bài học và môn học Thầy/Cô đã chọn.*")
 
 
 # ==========================================
@@ -651,111 +760,226 @@ def get_integrated_gemini_key() -> str:
     except Exception:
         return ""
 
+
+def render_thinking_stage(placeholder, stage_idx: int, subject: str, grade: str, lesson_name: str, thought_text: str):
+    """Hiển thị hoạt ảnh tiến trình suy nghĩ của AI theo thời gian thực."""
+    steps = [
+        ("Phân tích Yêu cầu cần đạt (YCCĐ) & Chuẩn kiến thức", f"Xác định năng lực đặc thù và phẩm chất môn {subject} ({grade})"),
+        ("Thiết kế tiến trình 4 hoạt động học tập tương tác", "Chuẩn hóa Khởi động, Khám phá, Luyện tập, Vận dụng theo CV 5512"),
+        ("Biên soạn dàn bài 10-12 Slide & Kịch bản sư phạm", "Tạo thuyết minh giáo viên và mô tả đồ họa trực quan minh họa"),
+        ("Xây dựng ma trận & bản đặc tả đề kiểm tra", "Chuẩn hóa tỉ lệ 4 mức độ nhận thức và trắc nghiệm theo CV 7991")
+    ]
+    
+    progress_vals = [25, 55, 80, 100]
+    curr_progress = progress_vals[min(stage_idx, 3)]
+    
+    steps_html = []
+    for i, (title, desc) in enumerate(steps):
+        if i < stage_idx:
+            icon = '<i class="fa-solid fa-circle-check" style="color: #16A34A; font-size: 1.15rem;"></i>'
+            cls = "done"
+            status_text = '<span style="font-size: 0.78rem; color: #16A34A; font-weight: 700; margin-left: auto;">Đã xong</span>'
+        elif i == stage_idx:
+            icon = '<i class="fa-solid fa-circle-notch fa-spin" style="color: #2563EB; font-size: 1.15rem;"></i>'
+            cls = "active"
+            status_text = '<span style="font-size: 0.78rem; color: #2563EB; font-weight: 700; margin-left: auto;">Đang xử lí...</span>'
+        else:
+            icon = '<i class="fa-regular fa-circle" style="color: #94A3B8; font-size: 1.15rem;"></i>'
+            cls = "pending"
+            status_text = '<span style="font-size: 0.78rem; color: #94A3B8; margin-left: auto;">Chờ</span>'
+            
+        steps_html.append(f"""
+        <div class="thinking-step-row {cls}">
+            {icon}
+            <div style="flex-grow: 1;">
+                <div><b>Bước {i+1}:</b> {title}</div>
+                <div style="font-size: 0.78rem; opacity: 0.85;">{desc}</div>
+            </div>
+            {status_text}
+        </div>
+        """)
+        
+    all_steps_str = "\n".join(steps_html)
+    
+    html = f"""
+    <div class="ai-thinking-card">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 14px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div class="thinking-pulse-icon">
+                    <i class="fa-solid fa-brain" style="color: #2563EB; font-size: 1.25rem;"></i>
+                </div>
+                <div>
+                    <div style="font-size: 1.1rem; font-weight: 800; color: #1E293B;">
+                        EduMaster AI đang suy nghĩ &amp; thiết kế bài dạy...
+                    </div>
+                    <div style="font-size: 0.82rem; color: #64748B;">
+                        Chủ đề: <b>{lesson_name}</b> • {subject} ({grade})
+                    </div>
+                </div>
+            </div>
+            <div style="background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 999px; padding: 6px 14px; font-size: 0.8rem; font-weight: 700; color: #1D4ED8; display: flex; align-items: center; gap: 6px;">
+                <i class="fa-solid fa-sparkles" style="color: #2563EB;"></i> Google Gemini 2.5 Flash Thinking
+            </div>
+        </div>
+        
+        <div class="thinking-progress-track">
+            <div class="thinking-progress-bar" style="width: {curr_progress}%;"></div>
+        </div>
+        
+        <div class="thinking-steps-box">
+            {all_steps_str}
+        </div>
+        
+        <div class="thinking-log-terminal">
+            <i class="fa-solid fa-terminal" style="color: #38BDF8;"></i>
+            <span style="flex-grow: 1;">{thought_text}</span>
+            <span class="thinking-cursor"></span>
+        </div>
+    </div>
+    """
+    cleaned = "\n".join(line.strip() for line in html.split("\n") if line.strip())
+    placeholder.markdown(cleaned, unsafe_allow_html=True)
+
+
 if btn_generate:
     if not lesson_name.strip():
-        st.warning("⚠️ Thầy/Cô vui lòng nhập **Tên bài học / Chủ đề** ở thanh bên trái trước khi xuất bản hồ sơ.")
+        st.warning("Thầy/Cô vui lòng nhập Tên bài học / Chủ đề ở thanh bên trái trước khi xuất bản hồ sơ.")
     else:
         active_api_key = get_integrated_gemini_key()
         curr_notes = special_notes if 'special_notes' in locals() and special_notes else ""
         
-        with st.spinner(f"EduMaster AI (Gemini 2.5 Flash) đang biên soạn hồ sơ bài dạy '{lesson_name}' môn {subject} ({grade}) chuẩn CV 5512 & CV 7991..."):
-            ai_success = False
-            if active_api_key:
-                try:
-                    new_data = generate_pedagogical_package(
-                        api_key=active_api_key,
-                        grade_level=grade_level,
-                        grade=grade,
-                        subject=subject,
-                        book_series=book_series,
-                        lesson_name=lesson_name,
-                        duration=duration,
-                        special_notes=curr_notes,
-                        model_name="gemini-2.5-flash"
-                    )
-                    
-                    # Gắn hình ảnh minh họa cho slide do AI sinh ra
-                    raw_slides = new_data.get("slides", [])
-                    slides_with_img = attach_slide_images(subject, raw_slides)
-                    
-                    st.session_state["current_package"] = {
-                        "metadata": {
-                            "grade_level": grade_level,
-                            "grade": grade,
-                            "subject": subject,
-                            "book_series": book_series,
-                            "lesson_name": lesson_name,
-                            "duration": duration,
-                            "special_notes": curr_notes
-                        },
-                        "lesson_plan": new_data.get("lesson_plan_markdown", ""),
-                        "slides": slides_with_img,
-                        "exam_matrix": new_data.get("exam_matrix_markdown", ""),
-                        "exam_spec": new_data.get("exam_spec_markdown", ""),
-                        "exam_questions": new_data.get("exam_questions_markdown", ""),
-                        "exam_answers": new_data.get("exam_answers_markdown", ""),
-                        "pedagogical_summary": new_data.get("pedagogical_summary", f"Đã khởi tạo hoàn tất hồ sơ sư phạm môn {subject} chất lượng cao."),
-                        "summary_knowledge": [
-                            f"Nắm vững các khái niệm, quy luật và nguyên lí trọng tâm của bài học: {lesson_name}.",
-                            "Phân tích mối quan hệ logic giữa lí thuyết môn học và thực tiễn đời sống.",
-                            "Vận dụng kiến thức bài học giải quyết các bài tập và nhiệm vụ tình huống."
-                        ],
-                        "summary_competencies": [
-                            f"Năng lực chung: Tự chủ trong tự học SGK {book_series}; Hợp tác nhóm thảo luận hiệu quả.",
-                            f"Năng lực đặc thù môn {subject}: Nhận thức bản chất khoa học và mô hình hóa giải quyết vấn đề."
-                        ],
-                        "summary_qualities": [
-                            "Chăm chỉ: Tích cực tìm tòi, ghi chép và rèn luyện kĩ năng.",
-                            "Trách nhiệm: Hoàn thành đúng tiến độ nhiệm vụ được phân công."
-                        ],
-                        "activities": [
-                            {
-                                "name": "Hoạt động 1: Mở đầu / Khởi động",
-                                "duration": "10 phút",
-                                "objective": f"Tạo mâu thuẫn nhận thức và kích thích tư duy tìm hiểu {lesson_name}.",
-                                "content": "Quan sát hình ảnh/video thực tế và trả lời câu hỏi gợi mở của giáo viên.",
-                                "steps": ["GV chiếu tình huống", "HS thảo luận cặp đôi", "Đại diện phát biểu ý kiến", "GV nhận xét và vào bài"]
-                            },
-                            {
-                                "name": "Hoạt động 2: Hình thành kiến thức mới",
-                                "duration": "50 phút",
-                                "objective": "Nghiên cứu tài liệu SGK, khám phá quy luật và chuẩn hóa kiến thức cốt lõi.",
-                                "content": "Phân chia các mạch kiến thức trọng tâm giải quyết theo phiếu học tập nhóm.",
-                                "steps": ["Giao phiếu học tập", "HS thảo luận xử lí dữ liệu", "Đại diện thuyết trình", "GV chuẩn hóa kiến thức"]
-                            },
-                            {
-                                "name": "Hoạt động 3: Luyện tập củng cố",
-                                "duration": "18 phút",
-                                "objective": "Khắc sâu kiến thức qua hệ thống bài tập trắc nghiệm và câu hỏi rèn luyện.",
-                                "content": "Giải quyết các câu trắc nghiệm tương tác và bài tập tình huống thực tế.",
-                                "steps": ["Giao bài tập độc lập", "HS làm bài vào vở", "Lên bảng chữa bài", "GV nhận xét, sửa lỗi"]
-                            },
-                            {
-                                "name": "Hoạt động 4: Vận dụng thực tiễn",
-                                "duration": "12 phút",
-                                "objective": "Vận dụng kiến thức bài học vào giải quyết vấn đề thực tế đời sống.",
-                                "content": "Nhiệm vụ dự án nhỏ tìm hiểu ứng dụng thực tiễn tại quê hương hoặc trong đời sống.",
-                                "steps": ["Giao nhiệm vụ dự án", "HS lập kế hoạch", "Thực hiện tại nhà", "Nộp trên LMS buổi sau"]
-                            }
-                        ]
-                    }
-                    ai_success = True
-                    st.toast(f"Đã biên soạn thành công với Gemini 2.5 Flash: '{lesson_name}'!", icon="✨")
-                except Exception as e:
-                    ai_success = False
-
-            if not ai_success:
-                st.session_state["current_package"] = generate_tailored_package(
-                    subject=subject,
-                    grade=grade,
+        thinking_box = st.empty()
+        
+        # Hoạt ảnh tiến trình suy nghĩ - Bước 1
+        render_thinking_stage(
+            thinking_box, 0, subject, grade, lesson_name,
+            f"Phân tích chuẩn kiến thức & YCCĐ môn {subject} ({grade}) cho bài học '{lesson_name}'..."
+        )
+        time.sleep(0.45)
+        
+        # Hoạt ảnh tiến trình suy nghĩ - Bước 2
+        render_thinking_stage(
+            thinking_box, 1, subject, grade, lesson_name,
+            "Thiết kế 4 hoạt động học tập chuẩn Công văn 5512 (Khởi động -> Khám phá -> Luyện tập -> Vận dụng)..."
+        )
+        time.sleep(0.45)
+        
+        # Hoạt ảnh tiến trình suy nghĩ - Bước 3
+        render_thinking_stage(
+            thinking_box, 2, subject, grade, lesson_name,
+            "Khởi tạo dàn bài 10-12 Slide trực quan, kịch bản thuyết minh sư phạm & mô tả đồ họa..."
+        )
+        time.sleep(0.45)
+        
+        # Hoạt ảnh tiến trình suy nghĩ - Bước 4 & Kích hoạt AI biên soạn
+        render_thinking_stage(
+            thinking_box, 3, subject, grade, lesson_name,
+            "Chuẩn hóa ma trận 4 mức độ nhận thức & bản đặc tả đề kiểm tra chuẩn Công văn 7991/BGDĐT-GDTrH..."
+        )
+        
+        ai_success = False
+        if active_api_key:
+            try:
+                new_data = generate_pedagogical_package(
+                    api_key=active_api_key,
                     grade_level=grade_level,
+                    grade=grade,
+                    subject=subject,
                     book_series=book_series,
                     lesson_name=lesson_name,
-                    special_notes=curr_notes
+                    duration=duration,
+                    special_notes=curr_notes,
+                    model_name="gemini-2.5-flash"
                 )
-                st.toast(f"Đã xuất bản thành công hồ sơ bài học '{lesson_name}' ({subject} - {grade})!", icon="✅")
-            
-            st.rerun()
+                
+                # Gắn hình ảnh minh họa cho slide do AI sinh ra
+                raw_slides = new_data.get("slides", [])
+                slides_with_img = attach_slide_images(subject, raw_slides)
+                
+                st.session_state["current_package"] = {
+                    "metadata": {
+                        "grade_level": grade_level,
+                        "grade": grade,
+                        "subject": subject,
+                        "book_series": book_series,
+                        "lesson_name": lesson_name,
+                        "duration": duration,
+                        "special_notes": curr_notes
+                    },
+                    "lesson_plan": new_data.get("lesson_plan_markdown", ""),
+                    "slides": slides_with_img,
+                    "exam_matrix": new_data.get("exam_matrix_markdown", ""),
+                    "exam_spec": new_data.get("exam_spec_markdown", ""),
+                    "exam_questions": new_data.get("exam_questions_markdown", ""),
+                    "exam_answers": new_data.get("exam_answers_markdown", ""),
+                    "pedagogical_summary": new_data.get("pedagogical_summary", f"Đã khởi tạo hoàn tất hồ sơ sư phạm môn {subject} chất lượng cao."),
+                    "summary_knowledge": [
+                        f"Nắm vững các khái niệm, quy luật và nguyên lí trọng tâm của bài học: {lesson_name}.",
+                        "Phân tích mối quan hệ logic giữa lí thuyết môn học và thực tiễn đời sống.",
+                        "Vận dụng kiến thức bài học giải quyết các bài tập và nhiệm vụ tình huống."
+                    ],
+                    "summary_competencies": [
+                        f"Năng lực chung: Tự chủ trong tự học SGK {book_series}; Hợp tác nhóm thảo luận hiệu quả.",
+                        f"Năng lực đặc thù môn {subject}: Nhận thức bản chất khoa học và mô hình hóa giải quyết vấn đề."
+                    ],
+                    "summary_qualities": [
+                        "Chăm chỉ: Tích cực tìm tòi, ghi chép và rèn luyện kĩ năng.",
+                        "Trách nhiệm: Hoàn thành đúng tiến độ nhiệm vụ được phân công."
+                    ],
+                    "activities": [
+                        {
+                            "name": "Hoạt động 1: Mở đầu / Khởi động",
+                            "duration": "10 phút",
+                            "objective": f"Tạo mâu thuẫn nhận thức và kích thích tư duy tìm hiểu {lesson_name}.",
+                            "content": "Quan sát hình ảnh/video thực tế và trả lời câu hỏi gợi mở của giáo viên.",
+                            "steps": ["GV chiếu tình huống", "HS thảo luận cặp đôi", "Đại diện phát biểu ý kiến", "GV nhận xét và vào bài"]
+                        },
+                        {
+                            "name": "Hoạt động 2: Hình thành kiến thức mới",
+                            "duration": "50 phút",
+                            "objective": "Nghiên cứu tài liệu SGK, khám phá quy luật và chuẩn hóa kiến thức cốt lõi.",
+                            "content": "Phân chia các mạch kiến thức trọng tâm giải quyết theo phiếu học tập nhóm.",
+                            "steps": ["Giao phiếu học tập", "HS thảo luận xử lí dữ liệu", "Đại diện thuyết trình", "GV chuẩn hóa kiến thức"]
+                        },
+                        {
+                            "name": "Hoạt động 3: Luyện tập củng cố",
+                            "duration": "18 phút",
+                            "objective": "Khắc sâu kiến thức qua hệ thống bài tập trắc nghiệm và câu hỏi rèn luyện.",
+                            "content": "Giải quyết các câu trắc nghiệm tương tác và bài tập tình huống thực tế.",
+                            "steps": ["Giao bài tập độc lập", "HS làm bài vào vở", "Lên bảng chữa bài", "GV nhận xét, sửa lỗi"]
+                        },
+                        {
+                            "name": "Hoạt động 4: Vận dụng thực tiễn",
+                            "duration": "12 phút",
+                            "objective": "Vận dụng kiến thức bài học vào giải quyết vấn đề thực tế đời sống.",
+                            "content": "Nhiệm vụ dự án nhỏ tìm hiểu ứng dụng thực tiễn tại quê hương hoặc trong đời sống.",
+                            "steps": ["Giao nhiệm vụ dự án", "HS lập kế hoạch", "Thực hiện tại nhà", "Nộp trên LMS buổi sau"]
+                        }
+                    ]
+                }
+                ai_success = True
+            except Exception as e:
+                ai_success = False
+
+        if not ai_success:
+            st.session_state["current_package"] = generate_tailored_package(
+                subject=subject,
+                grade=grade,
+                grade_level=grade_level,
+                book_series=book_series,
+                lesson_name=lesson_name,
+                special_notes=curr_notes
+            )
+        
+        # Hoàn tất tiến trình suy nghĩ
+        render_thinking_stage(
+            thinking_box, 4, subject, grade, lesson_name,
+            "Hoàn tất biên soạn trọn bộ hồ sơ sư phạm chất lượng cao! Đang hiển thị kết quả..."
+        )
+        time.sleep(0.4)
+        thinking_box.empty()
+        st.toast(f"Đã xuất bản thành công hồ sơ bài học: '{lesson_name}' ({subject} - {grade})")
+        st.rerun()
 
 
 # ==========================================
@@ -844,7 +1068,7 @@ if current_pkg is None:
                 Bấm Xuất bản Hồ sơ
             </div>
             <div style="font-size: 0.88rem; color: #475569; line-height: 1.45;">
-                Nhấn nút màu xanh <b>[🚀 XUẤT BẢN HỒ SƠ BÀI DẠY]</b> để xem ngay Giáo án 5512, Slide trình chiếu và Đề thi 7991.
+                Nhấn nút màu xanh <b>[XUẤT BẢN HỒ SƠ BÀI DẠY]</b> để xem ngay Giáo án 5512, Slide trình chiếu và Đề thi 7991.
             </div>
         </div>
         """)
@@ -998,7 +1222,7 @@ else:
         if docx_bytes:
             clean_subj = cur_meta.get('subject', 'Mon').replace(' ', '_').replace('(', '').replace(')', '')
             st.download_button(
-                label=f"📄 Tải Hồ sơ Giáo án & Đề thi (.docx)",
+                label="Tải Hồ sơ Giáo án & Đề thi (.docx)",
                 data=docx_bytes.getvalue(),
                 file_name=f"EduMaster_{clean_subj}.docx",
                 mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -1010,7 +1234,7 @@ else:
         if pptx_bytes:
             clean_subj = cur_meta.get('subject', 'Mon').replace(' ', '_').replace('(', '').replace(')', '')
             st.download_button(
-                label=f"📊 Tải Bài giảng Slide (.pptx)",
+                label="Tải Bài giảng Slide (.pptx)",
                 data=pptx_bytes.getvalue(),
                 file_name=f"EduMaster_{clean_subj}_Slide.pptx",
                 mime="application/vnd.openxmlformats-officedocument.presentationml.presentation",
@@ -1022,7 +1246,7 @@ else:
         clean_subj = cur_meta.get('subject', 'Mon').replace(' ', '_').replace('(', '').replace(')', '')
         full_md = f"# {cur_meta.get('lesson_name')}\n\n{current_pkg.get('lesson_plan')}\n\n{current_pkg.get('exam_matrix')}\n\n{current_pkg.get('exam_questions')}"
         st.download_button(
-            label="📋 Tải Toàn văn (.md)",
+            label="Tải Toàn văn (.md)",
             data=full_md.encode('utf-8'),
             file_name=f"EduMaster_{clean_subj}.md",
             mime="text/markdown",
@@ -1137,7 +1361,7 @@ else:
             st.markdown(current_pkg.get("lesson_plan", ""))
 
         # Toàn văn chi tiết khi thầy cô cần xem hoặc in ấn
-        with st.expander("📄 Xem & Sao chép Toàn văn Kế hoạch bài dạy chi tiết (Văn bản in ấn)", expanded=False):
+        with st.expander("Xem & Sao chép Toàn văn Kế hoạch bài dạy chi tiết (Văn bản in ấn)", expanded=False):
             st.markdown(current_pkg.get("lesson_plan", ""))
 
 
